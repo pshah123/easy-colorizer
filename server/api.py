@@ -24,9 +24,11 @@ async def serve(q, name):
     except:
         return text('File not found.', status=404)
 
+
 @app.route('/paint', methods=['OPTIONS'])
 async def preflight(q):
     return text('OK', status=200)
+
 
 @app.route('/paint', methods=['POST'])
 async def paint(q):
@@ -42,7 +44,8 @@ async def paint(q):
     sketch = cv2.imdecode(np.fromstring(sketchURI, dtype=np.uint8), -1)
 
     try:
-        ref = cv2.imread('ref/' + q.json.get('ref') + '.png', cv2.IMREAD_UNCHANGED)
+        ref = cv2.imread('ref/' + q.json.get('ref') +
+                         '.png', cv2.IMREAD_UNCHANGED)
         print(ref.shape)
     except:
         return text('Reference not valid!', status=400)
@@ -60,8 +63,21 @@ async def paint(q):
 
     try:
         t = time.time()
-
-        sketch = from_png_to_jpg(sketch)
+        try:
+            sketch = from_png_to_jpg(sketch)
+        except:
+            sketch = cv2.cvtColor(sketch, cv2.COLOR_GRAY2RGBA)
+            print("Reshaped")
+            print(sketch.shape)
+            try:
+                sketch = from_png_to_jpg(sketch)
+            except:
+                sketch = from_png_to_jpg(
+                    cv2.cvtColor(sketch, cv2.COLOR_RGBA2GRAY))
+                pass
+            pass
+        raw_shape = sketch.shape
+        print(raw_shape)
         raw_shape = sketch.shape
 
         print("PNGified sketch (%02fs)" % (time.time() - t))
