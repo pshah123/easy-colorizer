@@ -1,0 +1,40 @@
+/* Base */
+
+html,
+body {
+  height: 100%;
+  display: flex;
+  flex: 1;
+}
+
+/* -------------- */
+
+.black {
+  background-color: #151515;
+  color: #f8f8f8;
+}
+
+.slate {
+  background-color: #444;
+}
+
+.light {
+  background-color: #bbb;
+}
+
+.holder {
+  flex: 0.47;
+  margin: auto;
+  height: 90%;
+}
+
+.interactive {
+  background-image: url(up.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50% 50%;
+}
+
+.interactive:hover {
+  cursor: pointer;
+}

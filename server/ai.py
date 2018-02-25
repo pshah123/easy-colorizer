@@ -42,16 +42,16 @@ def YUV2RGB(x):
 session = keras.backend.get_session()
 
 with tf.device(strg0):
-    dull_head = load_model('dull_head.net')
-    gate_head = load_model('gate_head.net')
-    line_head = load_model('line_head.net')
-    noise_tail = load_model('noise_tail.net')
-    clear_tail = load_model('clear_tail.net')
+    dull_head = load_model('models/dull_head.net')
+    gate_head = load_model('models/gate_head.net')
+    line_head = load_model('models/line_head.net')
+    noise_tail = load_model('models/noise_tail.net')
+    clear_tail = load_model('models/clear_tail.net')
 
 with tf.device(strg1):
-    base_head = load_model('base_head.net')
-    base_neck = load_model('base_neck.net')
-    base_reader = load_model('base_reader.net')
+    base_head = load_model('models/base_head.net')
+    base_neck = load_model('models/base_neck.net')
+    base_reader = load_model('models/base_reader.net')
 
 ip1 = tf.placeholder(dtype=tf.float32, shape=(None, None, None, 1))
 ip3 = tf.placeholder(dtype=tf.float32, shape=(None, None, None, 3))
@@ -93,14 +93,14 @@ with tf.device(strg1):
 
 session.run(tf.global_variables_initializer())
 
-dull_head.load_weights('dull_head.net')
-gate_head.load_weights('gate_head.net')
-line_head.load_weights('line_head.net')
-base_head.load_weights('base_head.net')
-base_neck.load_weights('base_neck.net')
-noise_tail.load_weights('noise_tail.net')
-clear_tail.load_weights('clear_tail.net')
-base_reader.load_weights('base_reader.net')
+dull_head.load_weights('models/dull_head.net')
+gate_head.load_weights('models/gate_head.net')
+line_head.load_weights('models/line_head.net')
+base_head.load_weights('models/base_head.net')
+base_neck.load_weights('models/base_neck.net')
+noise_tail.load_weights('models/noise_tail.net')
+clear_tail.load_weights('models/clear_tail.net')
+base_reader.load_weights('models/base_reader.net')
 
 
 def go_head(sketch, global_hint, local_hint):

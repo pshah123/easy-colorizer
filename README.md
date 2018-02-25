@@ -1,128 +1,57 @@
-# STYLE2PAINTS 2.1 （finding server now）
+# Style2Paints
 
-~First of all, why not spend 5 minutes to try it yourself!~
+Based off of the original style2paints, but simplified server, async sanic for API, and simple static HTML/CSS/JS web "app".
 
-~http://paintstransfer.com~
+If you're within the Imperial network, find it [here](http://cloud-vm-46-180.doc.ic.ac.uk). (works on VPN too)
 
-**Our server is shutdown because of some financial problems. We will rebuild the server soon.**
+Otherwise, you'll have to spin this up yourself.
 
-The AI can paint on a sketch according to a given specific color style.
+Requirements to run the API:
+- Python 3.5+ (recommend Anaconda distro)
+- Tensorflow (`pip install tensorflow` or if you have an Nvidia GPU `pip install tensorflow_gpu`)
+- Sanic and Sanic CORS (`pip install sanic sanic_cors`)
+- h5py (`pip install h5py`)
+- Keras (`pip install keras`)
+- OpenCV (`pip install opencv-python`) (3 works)
+- SKImage (`pip install scikit-image`)
 
-The AI can create its own color style to paint on a sketch.
+Requirements to run the server it ships with:
+- [Node 8](https://nodejs.org)
+- Express (`npm install express`)
 
-The AI can transfer illustrations' style.
+Alternatively, serve with whatever wsgi server you wish or upload to the web host of your choice.
 
-# Latest News
+If you run this outside of your own computer, you'll need to edit index.js to fetch the IP/hostname of your API server instead of 127.0.0.1, like so:
 
-2018.2.12 - PaintsTransfer 3.0 will be released in 2018.04.25-2018.05.15. We will use a totally non-residual very deep model.
+``` diff
+    ...
+    ref: ref
+    }
+-   fetch('http://127.0.0.1:8000/paint', {
++   fetch('http://my.api:8000/paint')
+        method: 'POST',
+    ...
+```
 
-2018.2.3 - We added the *super accurate pencil*, and the original pencil tool is replaced by *brush*. The problem of over colorization in non-reference mode is fixed when you use the *super accurate pencil*, and the color spreading of *super accurate pencil* is limited to a relative small degree.
+Run the API with `python api.py` (wait for it to say 'Goin Fast') and the server it ships with using `node app.js`. Website should open index.html, looks like a black screen with two boxes, one with an upload icon. Click the upload box, upload the image of your choosing and wait. On my 1060 w/ 6gb VRAM it takes appr. 10s to predict, on IC server (4@1ghz cpu, 8gb ram) takes 40 seconds. Once it has finished, it will display the image on the right hand side box. Works best with anime pics.
 
-# Tutorial
+# Changing Colors
 
-[Tutorial001(BiliBili)](https://www.bilibili.com/video/av17537429/)
+The default reference is Rem from Re:Zero, so you'll notice your characters tend to have blue hair and white, maidlike clothing colors. If you'd like to change the reference simply put a different picture to `server/ref` and pass the filename without extension (e.g. `rem` for `server/ref/rem.png`) in the fetch request in `index.js`:
 
-# Results with Hints
+``` diff
+    ...
+-   let ref = 'rem' // TODO: add ref selection
++   let ref = 'myreference'
+    ...
+```
 
-**We are the most accurate anime colorization AI to obey your hints!**
+I recommend using a large color illustration with as many characters as possible for the manga you're trying to colorize. In the future I plan to add reference selection.
 
-*All results below are achieved with one reference image and some human hints.*
+# Developing your own app
 
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/001.png)
+The API sends a 400 if the request is malformed with some debugging data, or a 500 if it fails to colorize the image.
 
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/002.png)
+# Credits
 
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/003.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/011.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/004.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/005.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/006.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/007.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/008.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/009.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/010.png)
-
-# Results without Hints
-
-**We are the most creative anime colorization AI without your hints!**
-
-*All results below are achieved **WITHOUT** any reference image or human hints.*
-
-**IMPORTANT: Here the only inputs is one sketch.**
-
-**IMPORTANT: NO human hint and NO reference is involved!**
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/012.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/013.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/014.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/015.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/016.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/017.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/018.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/019.png)
-
-![web_preview](https://raw.githubusercontent.com/lllyasviel/style2paints/master/tempfile/020.png)
-
-# Launch Server
-
-*you need a python 3.5/3.6 GPU environment with cuda.*
-
-    pip install tensorflow_gpu
-    pip install keras
-    pip install bottle
-    pip install gevent
-    pip install h5py
-    pip install opencv-python
-    pip install scikit-image
-    git clone https://github.com/lllyasviel/style2paints.git
-    (Then you need to download all models from our Google Drive and put these into 'server' folder.)
-    cd style2paints/server
-    python server.py
-
-# Models
-
-Currently, we reserve all rights about all these models. 
-
-We use Google Drive to upload models:
-
-    https://drive.google.com/open?id=1fWi4wmNj-xr-nCzuWMsN2rcm0249_Aem
-    
-Current model list of the 8 neural networks:
-
-    base_head.net
-    dull_head.net
-    gate_head.net
-    line_head.net
-    base_neck.net
-    clear_tail.net
-    noise_tail.net
-    base_reader.net
-
-# Training Datasets
-
-1. The recommended training dataset of illustrations is the 400k images from [nico-opendata](https://nico-opendata.jp/en/seigadata/index.html)
-
-2. The recommended training sketches is from [sketchKeras](https://github.com/lllyasviel/sketchKeras)
-
-# Community
-
-QQ Group ID: 184467946
-
-## Acknowledgements
-
-Thanks a lot to TaiZan. This project could not be achieved without his great help.
+The original repo and all of the AI work was done by @[lllyasviel](https://github.com/lllyasviel), who made a much more comprehensive web app with Bottle that allows more options and dynamic reference choosing. This refactor is meant to serve as a much more lightweight and simple use case for extensibility purposes, and uses Sanic to simplify async events.
