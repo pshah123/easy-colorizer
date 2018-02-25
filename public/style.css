@@ -26,12 +26,12 @@ body {
   flex: 0.47;
   margin: auto;
   height: 90%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .interactive {
   background-image: url(up.svg);
-  background-repeat: no-repeat;
-  background-position: center;
   background-size: 50% 50%;
 }
 
