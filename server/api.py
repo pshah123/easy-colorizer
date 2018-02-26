@@ -42,6 +42,7 @@ async def paint(q):
     except:
         return text('Sketch is not base64!', status=400)
     sketch = cv2.imdecode(np.fromstring(sketchURI, dtype=np.uint8), -1)
+    print(sketch.shape)
 
     try:
         ref = cv2.imread('ref/' + q.json.get('ref') +
@@ -66,21 +67,25 @@ async def paint(q):
         try:
             sketch = from_png_to_jpg(sketch)
         except:
-            sketch = cv2.cvtColor(sketch, cv2.COLOR_GRAY2RGBA)
-            print("Reshaped")
-            print(sketch.shape)
             try:
+                sketch = cv2.cvtColor(sketch, cv2.COLOR_GRAY2RGBA)
+                print("Reshaped")
+                print(sketch.shape)
                 sketch = from_png_to_jpg(sketch)
+                print("Used GRAY2RGBA")
             except:
                 try:
                     sketch = from_png_to_jpg(
                         cv2.cvtColor(sketch, cv2.COLOR_RGBA2GRAY))
-                except: pass
+                    print("Using RGBA2GRAY")
+                except:
+                    print("Treating as JPG")
+                    pass
                 pass
             pass
+
         raw_shape = sketch.shape
         print(raw_shape)
-        raw_shape = sketch.shape
 
         print("PNGified sketch (%02fs)" % (time.time() - t))
 

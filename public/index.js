@@ -10,9 +10,7 @@ $("#upload").on("change", () => {
     )
 })
 
-var dechunk = (s) => {
-
-}
+var i = 0
 
 readerBoi.onload = () => {
     let sketch = readerBoi.result
@@ -25,7 +23,7 @@ readerBoi.onload = () => {
         'contain'
     )
     let ref = 'rem' // TODO: add ref selection
-    let name = 'test' // TODO: generate name from filename
+    let name = 'test' + i // TODO: generate name from filename
     let d = {
         sketch: sketch,
         name: name,
@@ -63,12 +61,13 @@ readerBoi.onload = () => {
                     t = t.trim()
                     $('.result').css(
                         'background-image',
-                        'url(http://cloud-vm-46-180.doc.ic.ac.uk:8000/sketch/test)'
+                        'url(http://cloud-vm-46-180.doc.ic.ac.uk:8000/sketch/test' + i + ')'
                     )
                     $('.result').css(
                         'background-size',
                         'contain'
                     )
+                    i = i + 1
                 } else return read()
             })
         }
