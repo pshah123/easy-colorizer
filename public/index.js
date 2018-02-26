@@ -11,20 +11,7 @@ $("#upload").on("change", () => {
 })
 
 var dechunk = (s) => {
-    let text = ''
-    let reader = s.body.getReader()
-    let decoder = new TextDecoder()
-    let read = () => {
-        reader.read().then((s2) => {
-            let c = decoder.decode(s2.value || new Uint8Array, {
-                stream: !s.done
-            })
-            text += c
-            if (s2.done) return text
-            else return read()
-        })
-    }
-    return read()
+
 }
 
 readerBoi.onload = () => {
@@ -44,6 +31,7 @@ readerBoi.onload = () => {
         name: name,
         ref: ref
     }
+    toastr.info("Working... This could take up a minute or two.")
     fetch('http://cloud-vm-46-180.doc.ic.ac.uk:8000/paint', {
         method: 'POST',
         headers: {
@@ -51,16 +39,40 @@ readerBoi.onload = () => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(d)
-    }).then((s) => dechunk(s)).then((t) => {
-        t = t.trim()
-        $('.result').css(
-            'background-image',
-            'url(http://cloud-vm-46-180.doc.ic.ac.uk:8000/sketch/' + t + ')'
-        )
-        $('.result').css(
-            'background-size',
-            'contain'
-        )
+    }).then((s) => {
+        let t = ''
+        let reader = s.body.getReader()
+        let decoder = new TextDecoder()
+        let read = () => {
+            reader.read().then((s2) => {
+                let c = decoder.decode(s2.value || new Uint8Array, {
+                    stream: !s2.done
+                })
+                t = t.trim()
+                while (t.indexOf(':E') > 0) {
+                    toastr.info(t.substring(2, t.indexOf(':E')))
+                    t = t.substring(t.indexOf(':E') + 2).trim()
+                }
+                t += c
+                console.log(t)
+                if (s2.done) {
+                    while (t.indexOf(':E') > 0) {
+                        toastr.info(t.substring(2, t.indexOf(':E')))
+                        t = t.substring(t.indexOf(':E') + 2).trim()
+                    }
+                    t = t.trim()
+                    $('.result').css(
+                        'background-image',
+                        'url(http://cloud-vm-46-180.doc.ic.ac.uk:8000/sketch/test)'
+                    )
+                    $('.result').css(
+                        'background-size',
+                        'contain'
+                    )
+                } else return read()
+            })
+        }
+        return read()
     }).catch((e) => {
         console.log(e);
         try {
