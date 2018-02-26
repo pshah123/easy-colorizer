@@ -10,6 +10,23 @@ $("#upload").on("change", () => {
     )
 })
 
+var dechunk = (s) => {
+    let text = ''
+    let reader = s.body.getReader()
+    let decoder = new TextDecoder()
+    let read = () => {
+        reader.read().then((s2) => {
+            let c = decoder.decode(s2.value || new Uint8Array, {
+                stream: !s.done
+            })
+            text += c
+            if (s2.done) return text
+            else return read()
+        })
+    }
+    return read()
+}
+
 readerBoi.onload = () => {
     let sketch = readerBoi.result
     $('.interactive').css(
@@ -27,21 +44,29 @@ readerBoi.onload = () => {
         name: name,
         ref: ref
     }
-    fetch('http://127.0.0.1:8000/paint', {
+    fetch('http://cloud-vm-46-180.doc.ic.ac.uk:8000/paint', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(d)
-    }).then((s) => s.text()).then((t) => {
+    }).then((s) => dechunk(s)).then((t) => {
+        t = t.trim()
         $('.result').css(
             'background-image',
-            'url(http://127.0.0.1:8000/sketch/' + t + ')'
+            'url(http://cloud-vm-46-180.doc.ic.ac.uk:8000/sketch/' + t + ')'
         )
         $('.result').css(
             'background-size',
             'contain'
         )
-    }).catch((e) => console.log(e))
+    }).catch((e) => {
+        console.log(e);
+        try {
+            toastr.error(e)
+        } catch (e2) {
+            alert(e)
+        }
+    })
 }
