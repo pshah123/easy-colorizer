@@ -72,8 +72,10 @@ async def paint(q):
             try:
                 sketch = from_png_to_jpg(sketch)
             except:
-                sketch = from_png_to_jpg(
-                    cv2.cvtColor(sketch, cv2.COLOR_RGBA2GRAY))
+                try:
+                    sketch = from_png_to_jpg(
+                        cv2.cvtColor(sketch, cv2.COLOR_RGBA2GRAY))
+                except: pass
                 pass
             pass
         raw_shape = sketch.shape
@@ -97,12 +99,13 @@ async def paint(q):
                 sketch.shape[0], sketch.shape[1], 512))
             s.write(' ')
             sketch = go_tail(sketch, noisy=True)
-            s.write(' ')
+            s.write('S:Colorized Tails:E')
             sketch = k_resize(sketch, 48)
             s.write(' ')
             sketch = cv2.cvtColor(sketch, cv2.COLOR_RGB2GRAY)
             s.write(' ')
             cv2.imwrite('data/' + name + '.norm.jpg', sketch)
+            s.write('S:Normalized Sketch:E')
             print("Normalized sketch (%02fs)" % (time.time() - t))
 
             t = time.time()
@@ -111,12 +114,12 @@ async def paint(q):
             local_hint = d_resize(local_hint, sketch.shape)
             s.write(' ')
             painting = go_neck(sketch, global_hint, local_hint)
-            s.write(' ')
+            s.write('S:Colorized Neck:E')
             print('paint: ' + str(time.time() - t))
 
             t = time.time()
             fin = go_tail(painting, noisy=True)
-            s.write(' ')
+            s.write('S:Colorized everything:E')
             fin = s_resize(fin, raw_shape)
             s.write(' ')
             print('denoise: ' + str(time.time() - t))
